@@ -92,6 +92,37 @@
       margin-top: 2em;
       width: 180px;
     }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .product-card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f6f6f6;
+    }
+
+    .product-title {
+      font-weight: 600;
+      margin: 8px 0 4px;
+    }
+
+    .product-price {
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -103,73 +134,55 @@
     </nav>
   </header>
 
+  <!-- ✅ FIXED: only one section with id="products" -->
   <section id="products" class="products-grid"></section>
 
-<section id="products" class="products-grid"></section>
+  <script>
+    const API_URL = "https://testdeneuve-fpfgfjbpcydxfzgc.canadacentral-01.azurewebsites.net/api/listItems";
 
-<style>
-  .products-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:16px; align-items:start;
-  }
-  .product-card {
-    border:1px solid #ddd; border-radius:12px; padding:12px; background:#fff;
-  }
-  .product-card img {
-    width:100%; height:220px; object-fit:cover; border-radius:8px; background:#f6f6f6;
-  }
-  .product-title { font-weight:600; margin:8px 0 4px; }
-  .product-price { font-weight:700; }
-</style>
-
-<script>
-  const API_URL = "https://testdeneuve-fpfgfjbpcydxfzgc.canadacentral-01.azurewebsites.net/api/listItems?";
-
-  async function loadItems() {
-    try {
-      const res = await fetch(API_URL, { credentials: 'omit' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const items = Array.isArray(data) ? data : (data.items || []);
-      render(items);
-    } catch (e) {
-      console.error('Failed to load items', e);
-      document.getElementById('products').innerHTML = '<p>Failed to load items.</p>';
+    async function loadItems() {
+      try {
+        const res = await fetch(API_URL, { credentials: 'omit' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.items || []);
+        render(items);
+      } catch (e) {
+        console.error('Failed to load items', e);
+        document.getElementById('products').innerHTML = '<p>Failed to load items.</p>';
+      }
     }
-  }
 
-  function render(items) {
-    const grid = document.getElementById('products');
-    if (!items.length) { grid.innerHTML = '<p>No items yet.</p>'; return; }
+    function render(items) {
+      const grid = document.getElementById('products');
+      if (!items.length) { grid.innerHTML = '<p>No items yet.</p>'; return; }
 
-    grid.innerHTML = items.map(it => {
-      const title = it.title || it.name || '';
-      const price = Number(it.price || 0).toFixed(2);
-      const img   = it.imageUrl || it.image || '';
-      const desc  = it.description || '';
-      return `
-        <article class="product-card">
-          <img src="${img}" alt="${escapeHtml(title)}" loading="lazy">
-          <div class="product-title">${escapeHtml(title)}</div>
-          <div class="product-price">$${price}</div>
-          ${desc ? `<p>${escapeHtml(desc)}</p>` : ''}
-        </article>
-      `;
-    }).join('');
-  }
+      grid.innerHTML = items.map(it => {
+        const title = it.title || it.name || '';
+        const price = Number(it.price || 0).toFixed(2);
+        const img   = it.imageUrl || it.image || '';
+        const desc  = it.description || '';
+        return `
+          <article class="product-card">
+            <img src="${img}" alt="${escapeHtml(title)}" loading="lazy">
+            <div class="product-title">${escapeHtml(title)}</div>
+            <div class="product-price">$${price}</div>
+            ${desc ? `<p>${escapeHtml(desc)}</p>` : ''}
+          </article>
+        `;
+      }).join('');
+    }
 
-  function escapeHtml(s='') {
-    return s.replace(/[&<>"']/g, m => (
-      {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m]
-    ));
-  }
+    function escapeHtml(s='') {
+      return s.replace(/[&<>"']/g, m => (
+        {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m]
+      ));
+    }
 
-  loadItems();
-</script>
+    loadItems();
+  </script>
 
-
-  
+  <!-- These are your hard-coded examples -->
   <section class="product">
     <img src="product1.png" alt="Vintage Orange Dress" />
     <h2>Vintage Orange Dress</h2>
