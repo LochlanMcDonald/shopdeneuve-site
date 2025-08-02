@@ -124,14 +124,13 @@
 </style>
 
 <script>
-  const API_BASE = "https://testdeneuve-fpfgfjbpcydxfzgc.canadacentral-01.azurewebsites.net/api/listItems?";
+  const API_URL = "https://testdeneuve-fpfgfjbpcydxfzgc.canadacentral-01.azurewebsites.net/api/listItems";
 
   async function loadItems() {
     try {
-      const res = await fetch(`${API_BASE}/api/items?limit=48`, { credentials: 'omit' });
+      const res = await fetch(API_URL, { credentials: 'omit' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      // Your endpoint returns a raw array (per your screenshot)
       const items = Array.isArray(data) ? data : (data.items || []);
       render(items);
     } catch (e) {
@@ -160,8 +159,10 @@
     }).join('');
   }
 
-  function escapeHtml(s=''){
-    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function escapeHtml(s='') {
+    return s.replace(/[&<>"']/g, m => (
+      {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m]
+    ));
   }
 
   loadItems();
